@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'acl_system2/version'
 
 Gem::Specification.new do |gem|
   gem.name          = 'acl_system2'
-  gem.version       = '0.1.0'
+  gem.version       = ACLSystem2::VERSION
   gem.authors       = ['Ezra Zygmuntowicz', 'Fabien Franzen', 'Gareth Rees']
   gem.email         = ['gareth@garethrees.co.uk']
   gem.description   = %q{An access control gem for Rails. A flexible declarative way of protecting your various controller actions using roles.}
