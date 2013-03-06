@@ -1,90 +1,10 @@
-require 'test/unit'
 require File.dirname(__FILE__) + '/test_helper'
-require 'ostruct'
 
-# mock objects
-
-class User
-  
-  attr_accessor :name
-  
-  def name
-    @name ||= 'anon'
-    @name
-  end
-  
-  def roles
-    [OpenStruct.new(:title => 'admin'), OpenStruct.new(:title => 'user')]
-  end  
-
-end      
-
-class ControllerProxy
-
-  attr_accessor :action_name
-  
-  class << self
-  
-    attr_reader :before_block
-  
-    def before_filter(&block)
-      @before_block = block if block_given?
-    end
-  
-  end
-  
-  def before_action
-    self.class.before_block.call(self)
-  end
-    
-  include Caboose::AccessControl
-  
-  access_control([:create, :edit] => 'admin & !blacklist',
-      :update => '(admin | moderator) & !blacklist',
-      :list => '(admin | moderator | user) & !blacklist',
-      :private => 'vip') do |context|
-         context[:variable] = 'value'
-         context[:login_time] = Time.new
-      end
-  
-  def permission_granted
-    true
-  end
-  
-  def permission_denied
-    false
-  end
-  
-  def current_user
-    User.new
-  end
-  
-end
-
-class FabOnlyHandler < Caboose::AccessHandler 
-    
-  def check(key, context)
-    (context[:user].name.downcase == 'fabien' and context[:user].roles.map{ |role| role.title.downcase}.include?(key))
-  end
-      
-end
-
-class ControllerProxyWithFabHandler < ControllerProxy
-  
-  def retrieve_access_handler
-    FabOnlyHandler.new
-  end
-  
-end
-
-
-# tests         
 class AccessControlTest  < Test::Unit::TestCase
   
-
   def test_first
     context = { :user => User.new }
-    @handler = Caboose::RoleHandler.new
+    @handler = ACLSystem2::RoleHandler.new
     assert @handler.process("(admin | moderator) & !blacklist", context)  
     assert @handler.process("(user | moderator) & !blacklist", context)  
     assert @handler.process("(user | moderator | user) & !blacklist", context)  

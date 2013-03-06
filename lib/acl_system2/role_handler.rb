@@ -1,20 +1,13 @@
-module Caboose
-  
-  class AccessHandler   
-    include LogicParser
+require "#{ File.dirname(__FILE__) }/access_handler"
 
-    def check(key, context)
-      false
-    end
-  
-  end
-   
+module ACLSystem2
+
   class RoleHandler < AccessHandler 
     
     def check(key, context)  
       context[:user].roles.map{ |role| role.title.downcase}.include? key.downcase
     end
         
-  end # End RoleHandler
+  end
 
 end

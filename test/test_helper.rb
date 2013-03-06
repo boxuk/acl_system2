@@ -1,3 +1,4 @@
+require 'test/unit'
 require 'turn'
 
 Turn.config do |c|
@@ -5,4 +6,4 @@ Turn.config do |c|
 end
 
 require "#{ File.dirname(__FILE__) }/../lib/acl_system2"
-
+require "#{ File.dirname(__FILE__) }/mocks"
